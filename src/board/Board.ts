@@ -1,7 +1,8 @@
 import { Piece, Position } from "../pieces/Piece";
+import { Grid } from "../types/grid";
 
 export class Board {
-	grid: (Piece | null)[][];
+	grid: Grid;
 
 	constructor() {
 		this.grid = this.createEmptyBoard();
