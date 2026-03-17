@@ -1,3 +1,5 @@
+import { Board } from "../board/Board";
+
 export type Color = "white" | "black";
 
 export type Position = {
@@ -19,4 +21,8 @@ export class Piece {
 	moveTo(position: Position) {
 		this.position = position;
 	}
+
+	getLegalMoves(_board: Board): Position[] {
+    	return [];
+  	}
 }

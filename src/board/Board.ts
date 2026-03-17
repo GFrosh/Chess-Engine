@@ -1,5 +1,5 @@
 import { Piece, Position } from "../pieces/Piece";
-import { Grid } from "../types/grid";
+import { Grid, Row } from "../types/grid";
 
 export class Board {
 	grid: Grid;
@@ -8,11 +8,11 @@ export class Board {
 		this.grid = this.createEmptyBoard();
 	}
 
-	private createEmptyBoard(): (Piece | null)[][] {
-		const grid: (Piece | null)[][] = [];
+	private createEmptyBoard(): Grid {
+		const grid: Grid = [];
 
 		for (let row = 0; row < 8; row++) {
-			const currentRow: (Piece | null)[] = [];
+			const currentRow: Row = [];
 
 			for (let col = 0; col < 8; col++) {
 				currentRow.push(null);
