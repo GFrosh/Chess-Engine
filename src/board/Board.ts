@@ -22,20 +22,42 @@ export class Board {
 		return grid;
 	}
 
+	isWithinBounds(position: Position): boolean {
+		return (
+			position.row >= 0 &&
+			position.row < 8 &&
+			position.col >= 0 &&
+			position.col < 8
+		);
+	}
+
 	placePiece(piece: Piece) {
 		const { row, col } = piece.position;
+
+		if (!this.isWithinBounds(piece.position)) {
+			throw new Error("Cannot place piece out of bounds");
+		}
+
 		this.grid[row][col] = piece;
 	}
 
 	getPiece(position: Position): Piece | null {
+		if (!this.isWithinBounds(position)) {
+			return null;
+		}
+
 		return this.grid[position.row][position.col];
 	}
 
 	movePiece(from: Position, to: Position) {
+		if (!this.isWithinBounds(from) || !this.isWithinBounds(to)) {
+			throw new Error("Move out of bounds");
+		}
+
 		const piece = this.getPiece(from);
 
 		if (!piece) {
-		throw new Error("No piece at starting position");
+			throw new Error("No piece at starting position");
 		}
 
 		this.grid[to.row][to.col] = piece;

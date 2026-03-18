@@ -1,5 +1,5 @@
 import { Board } from "../board/Board";
-import { Piece, Color } from "../pieces/Piece";
+import { Color } from "../pieces/Piece";
 import { Pawn } from "../pieces/Pawn";
 import { algebraicToPosition } from "../utils/square";
 import { Move } from "../move/Move";

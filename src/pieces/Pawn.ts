@@ -16,7 +16,7 @@ export class Pawn extends Piece {
         // 1 step forward
         const oneStep = { row: row + direction, col };
 
-        if (!board.getPiece(oneStep)) {
+        if (board.isWithinBounds(oneStep) && !board.getPiece(oneStep)) {
         moves.push(oneStep);
 
         // 2 steps from starting position
@@ -25,10 +25,27 @@ export class Pawn extends Piece {
         if (row === startingRow) {
             const twoStep = { row: row + 2 * direction, col };
 
-            if (!board.getPiece(twoStep)) {
+            if (board.isWithinBounds(twoStep) && !board.getPiece(twoStep)) {
             moves.push(twoStep);
             }
         }
+        }
+
+        const diagonalLeft = { row: row + direction, col: col - 1 };
+        const diagonalRight = { row: row + direction, col: col + 1 };
+
+        const diagonalTargets = [diagonalLeft, diagonalRight];
+
+        for (const target of diagonalTargets) {
+            if (!board.isWithinBounds(target)) {
+                continue;
+            }
+
+            const piece = board.getPiece(target);
+
+            if (piece && piece.color !== this.color) {
+                moves.push(target);
+            }
         }
 
         return moves;
