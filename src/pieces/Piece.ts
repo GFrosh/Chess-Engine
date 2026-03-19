@@ -1,4 +1,5 @@
 import { Board } from "../board/Board";
+import { PieceType } from "../types/pieceType";
 
 export type Color = "white" | "black";
 
@@ -8,11 +9,11 @@ export type Position = {
 };
 
 export class Piece {
-	type: string;
+	type: PieceType;
 	color: Color;
 	position: Position;
 
-	constructor(type: string, color: Color, position: Position) {
+	constructor(type: PieceType, color: Color, position: Position) {
 		this.type = type;
 		this.color = color;
 		this.position = position;

@@ -8,13 +8,15 @@ export class Board {
 		this.grid = this.createEmptyBoard();
 	}
 
+	private size: number = 8;
+
 	private createEmptyBoard(): Grid {
 		const grid: Grid = [];
 
-		for (let row = 0; row < 8; row++) {
+		for (let row = 0; row < this.size; row++) {
 			const currentRow: Row = [];
 
-			for (let col = 0; col < 8; col++) {
+			for (let col = 0; col < this.size; col++) {
 				currentRow.push(null);
 			}
 			grid.push(currentRow);
@@ -25,9 +27,9 @@ export class Board {
 	isWithinBounds(position: Position): boolean {
 		return (
 			position.row >= 0 &&
-			position.row < 8 &&
+			position.row < this.size &&
 			position.col >= 0 &&
-			position.col < 8
+			position.col < this.size
 		);
 	}
 

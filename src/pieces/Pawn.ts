@@ -1,224 +1,57 @@
-import { Piece, Position, Color } from "./Piece";
 import { Board } from "../board/Board";
-
-export type PromotionPieceType = "queen" | "rook" | "bishop" | "knight";
-
-export type PawnMove = {
-    to: Position;
-    isCapture: boolean;
-    promotionChoices: PromotionPieceType[];
-};
-
-class PromotedPiece extends Piece {
-    constructor(type: PromotionPieceType, color: Color, position: Position) {
-        super(type, color, position);
-    }
-
-    getLegalMoves(board: Board): Position[] {
-        if (this.type === "knight") {
-            return this.getKnightMoves(board);
-        }
-
-        if (this.type === "bishop") {
-            return this.getRayMoves(board, [
-                { rowDelta: -1, colDelta: -1 },
-                { rowDelta: -1, colDelta: 1 },
-                { rowDelta: 1, colDelta: -1 },
-                { rowDelta: 1, colDelta: 1 }
-            ]);
-        }
-
-        if (this.type === "rook") {
-            return this.getRayMoves(board, [
-                { rowDelta: -1, colDelta: 0 },
-                { rowDelta: 1, colDelta: 0 },
-                { rowDelta: 0, colDelta: -1 },
-                { rowDelta: 0, colDelta: 1 }
-            ]);
-        }
-
-        return this.getRayMoves(board, [
-            { rowDelta: -1, colDelta: -1 },
-            { rowDelta: -1, colDelta: 1 },
-            { rowDelta: 1, colDelta: -1 },
-            { rowDelta: 1, colDelta: 1 },
-            { rowDelta: -1, colDelta: 0 },
-            { rowDelta: 1, colDelta: 0 },
-            { rowDelta: 0, colDelta: -1 },
-            { rowDelta: 0, colDelta: 1 }
-        ]);
-    }
-
-    private getRayMoves(
-        board: Board,
-        directions: { rowDelta: number; colDelta: number }[]
-    ): Position[] {
-        const moves: Position[] = [];
-
-        for (const direction of directions) {
-            let row = this.position.row + direction.rowDelta;
-            let col = this.position.col + direction.colDelta;
-
-            while (board.isWithinBounds({ row, col })) {
-                const target = { row, col };
-                const piece = board.getPiece(target);
-
-                if (!piece) {
-                    moves.push(target);
-                    row += direction.rowDelta;
-                    col += direction.colDelta;
-                    continue;
-                }
-
-                if (piece.color !== this.color) {
-                    moves.push(target);
-                }
-
-                break;
-            }
-        }
-
-        return moves;
-    }
-
-    private getKnightMoves(board: Board): Position[] {
-        const moves: Position[] = [];
-
-        const jumps = [
-            { rowDelta: -2, colDelta: -1 },
-            { rowDelta: -2, colDelta: 1 },
-            { rowDelta: -1, colDelta: -2 },
-            { rowDelta: -1, colDelta: 2 },
-            { rowDelta: 1, colDelta: -2 },
-            { rowDelta: 1, colDelta: 2 },
-            { rowDelta: 2, colDelta: -1 },
-            { rowDelta: 2, colDelta: 1 }
-        ];
-
-        for (const jump of jumps) {
-            const target = {
-                row: this.position.row + jump.rowDelta,
-                col: this.position.col + jump.colDelta
-            };
-
-            if (!board.isWithinBounds(target)) {
-                continue;
-            }
-
-            const piece = board.getPiece(target);
-
-            if (!piece || piece.color !== this.color) {
-                moves.push(target);
-            }
-        }
-
-        return moves;
-    }
-}
+import { Piece, Position, Color } from "./Piece";
 
 export class Pawn extends Piece {
     constructor(color: Color, position: Position) {
-        super("pawn", color, position);
-    }
+		super("pawn", color, position);
+	}
 
-    getLegalMoves(board: Board): Position[] {
-        return this.getLegalMoveDetails(board).map((move) => move.to);
-    }
 
-    getLegalMoveDetails(board: Board): PawnMove[] {
-        const moves: PawnMove[] = [];
+	// THIS IS METHOD OVER-"RIDING" 😂 IYKYK
+	getLegalMoves(board: Board): Position[] {
+		
+		// JUST DEFINING MOVES AND DIRECTION FOR EACH INSTANCE
+		const moves: Position[] = [];
+		const direction: number = this.color === "white" ? -1 : 1;
+		const { row, col } = this.position;
 
-        moves.push(...this.getForwardMoves(board));
-        moves.push(...this.getCaptureMoves(board));
+		// POSSIBLE PAWN MOVES
+		const oneStep: Position = { row: row + direction, col }; // FOR A STEP FORWARD
+		const twoStep: Position = { row: row + 2 * direction, col } //FOR TWO STEPS FORWARD FROM STARTING POINT
+		const captureLeft: Position = { row: row + direction, col: col - 1} // FOR A CAPTURE ON THE LEFT
+		const captureRight: Position = { row: row + direction, col: col + 1} // YOU SHOULD KNOW...
 
-        return moves;
-    }
+		// A NORMAL STEP FORWARD
+		if (board.isWithinBounds(oneStep) && !board.getPiece(oneStep)) {
+			moves.push(oneStep);
 
-    canPromote(position: Position = this.position): boolean {
-        return position.row === this.getPromotionRow();
-    }
+			// MAKING SURE PAWN IS ON STARTING ROW FOR A TWO-STEP MOVE
+			const startingRow: number = this.color === "white" ? 6 : 1;
+			if (row === startingRow) {
+				if (board.isWithinBounds(twoStep) && !board.getPiece(twoStep)) moves.push(twoStep);
+			}
+		}
 
-    promote(to: PromotionPieceType): Piece {
-        if (!this.canPromote()) {
-            throw new Error("Pawn is not on promotion rank");
-        }
+		// DIAGONAL CAPTURES
+		const leftPiece = board.getPiece(captureLeft);
+		const rightPiece = board.getPiece(captureRight);
 
-        return new PromotedPiece(to, this.color, { ...this.position });
-    }
+		if (board.isWithinBounds(captureLeft) && leftPiece && leftPiece.color !== this.color) {
+			moves.push(captureLeft);
+		}
+		
+		if (board.isWithinBounds(captureRight) && rightPiece && rightPiece.color !== this.color) {
+			moves.push(captureRight);
+		}
 
-    private getForwardMoves(board: Board): PawnMove[] {
-        const moves: PawnMove[] = [];
-        const direction = this.getDirection();
-        const oneStep: Position = {
-            row: this.position.row + direction,
-            col: this.position.col
-        };
 
-        if (!board.isWithinBounds(oneStep) || board.getPiece(oneStep)) {
-            return moves;
-        }
+		/* // I'LL IMPLEMENT EN PASSANT LATER
+		// SHOULD BE A MOVE THAT CHECKS IF A
+		// PIECE IS TO THE SIDE AFTER A TWO-STEP FORWARD MOVEMENT */
 
-        moves.push(this.createMove(oneStep, false));
 
-        const twoStep: Position = {
-            row: this.position.row + 2 * direction,
-            col: this.position.col
-        };
 
-        if (
-            this.position.row === this.getStartingRow() &&
-            board.isWithinBounds(twoStep) &&
-            !board.getPiece(twoStep)
-        ) {
-            moves.push(this.createMove(twoStep, false));
-        }
-
-        return moves;
-    }
-
-    private getCaptureMoves(board: Board): PawnMove[] {
-        const moves: PawnMove[] = [];
-        const direction = this.getDirection();
-
-        const candidates: Position[] = [
-            { row: this.position.row + direction, col: this.position.col - 1 },
-            { row: this.position.row + direction, col: this.position.col + 1 }
-        ];
-
-        for (const target of candidates) {
-            if (!board.isWithinBounds(target)) {
-                continue;
-            }
-
-            const targetPiece = board.getPiece(target);
-
-            if (targetPiece && targetPiece.color !== this.color) {
-                moves.push(this.createMove(target, true));
-            }
-        }
-
-        return moves;
-    }
-
-    private createMove(to: Position, isCapture: boolean): PawnMove {
-        return {
-            to,
-            isCapture,
-            promotionChoices: this.canPromote(to)
-                ? ["queen", "rook", "bishop", "knight"]
-                : []
-        };
-    }
-
-    private getDirection(): number {
-        return this.color === "white" ? -1 : 1;
-    }
-
-    private getStartingRow(): number {
-        return this.color === "white" ? 6 : 1;
-    }
-
-    private getPromotionRow(): number {
-        return this.color === "white" ? 0 : 7;
-    }
+		// MOVES BEING AN ARRAY OF ALL LEGAL MOVES...
+		return moves;
+	}
 }

@@ -1,6 +1,7 @@
 import { Board } from "../board/Board";
-import { Color } from "../pieces/Piece";
-import { Pawn, PromotionPieceType } from "../pieces/Pawn";
+import { Color, Position } from "../pieces/Piece";
+import { Pawn } from "../pieces/Pawn";
+import { PromotionPieceType } from "../types/pieceType";
 import { algebraicToPosition } from "../utils/square";
 import { Move } from "../move/Move";
 
@@ -23,15 +24,15 @@ export class Game {
 		// Pawns only (for now)
 
 		for (let col = 0; col < 8; col++) {
-		// White pawns
-		this.board.placePiece(
-			new Pawn("white", { row: 6, col })
-		);
+			// White pawns
+			this.board.placePiece(
+				new Pawn("white", { row: 6, col })
+			);
 
-		// Black pawns
-		this.board.placePiece(
-			new Pawn("black", { row: 1, col })
-		);
+			// Black pawns
+			this.board.placePiece(
+				new Pawn("black", { row: 1, col })
+			);
 		}
 	}
 
@@ -44,7 +45,6 @@ export class Game {
 		const to = algebraicToPosition(toSquare);
 
 		const move = new Move(from, to);
-
 		const piece = this.board.getPiece(move.from);
 
 		if (!piece) {
@@ -57,9 +57,7 @@ export class Game {
 
 		const legalMoves = piece.getLegalMoves(this.board);
 
-		const isLegal = legalMoves.some(
-			(pos) => pos.row === move.to.row && pos.col === move.to.col
-		);
+		const isLegal = legalMoves.some((pos: Position) => pos.row === move.to.row && pos.col === move.to.col);
 
 		if (!isLegal) {
 			throw new Error("Illegal move");
@@ -70,18 +68,8 @@ export class Game {
 
 		const movedPiece = this.board.getPiece(move.to);
 
-		if (movedPiece instanceof Pawn && movedPiece.canPromote()) {
-			const promotedPiece = movedPiece.promote(promoteTo);
-			this.board.placePiece(promotedPiece);
-		}
-
-		const promotionSuffix =
-			movedPiece instanceof Pawn && movedPiece.canPromote()
-				? `=${promoteTo}`
-				: "";
-
-		this.moveHistory.push(`${fromSquare} -> ${toSquare}${promotionSuffix}`);
-
+		
+		
 		this.switchTurn();
 		}
 
