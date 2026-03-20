@@ -9,3 +9,6 @@ game.move("e4", "d5");
 
 console.log("Game History: ");
 console.log(game.moveHistory);
+
+console.log("Board State: ");
+game.board.print();

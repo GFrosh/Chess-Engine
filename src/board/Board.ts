@@ -84,31 +84,31 @@ export class Board {
 	// Simple ASCII board renderer for debugging in terminal output.
 	toAscii(): string {
 		const lines: string[] = [];
+		const symbolMap: Record<Piece["type"], string> = {
+			pawn: "p",
+			rook: "r",
+			knight: "n",
+			bishop: "b",
+			queen: "q",
+			king: "k"
+		};
 
 		for (let row = 0; row < this.size; row++) {
 			const rank = this.size - row;
 			const rowCells = this.grid[row].map((square) => {
 				if (!square) {
-					return ".";
+					return "--";
 				}
 
-				const symbolMap: Record<Piece["type"], string> = {
-					pawn: "p",
-					rook: "r",
-					knight: "n",
-					bishop: "b",
-					queen: "q",
-					king: "k"
-				};
-
 				const symbol = symbolMap[square.type];
-				return square.color === "white" ? symbol.toUpperCase() : symbol;
+				const color = square.color === "white" ? "w" : "b";
+				return `${color}${symbol}`;
 			});
 
 			lines.push(`${rank} ${rowCells.join(" ")}`);
 		}
 
-		lines.push("  a b c d e f g h");
+		lines.push("  a  b  c  d  e  f  g  h");
 		return lines.join("\n");
 	}
 
