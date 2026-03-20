@@ -46,4 +46,30 @@ describe("Pawn legal moves", () => {
 		expect(containsPosition(moves, { row: 5, col: 3 })).toBe(true);
 		expect(containsPosition(moves, { row: 5, col: 5 })).toBe(false);
 	});
+
+	it("allows black pawn one-step and two-step from starting row when clear", () => {
+		const board = new Board();
+		const pawn = new Pawn("black", { row: 1, col: 3 });
+		board.placePiece(pawn);
+
+		const moves = pawn.getLegalMoves(board);
+
+		expect(containsPosition(moves, { row: 2, col: 3 })).toBe(true);
+		expect(containsPosition(moves, { row: 3, col: 3 })).toBe(true);
+	});
+
+	it("allows black diagonal capture only for enemy pieces", () => {
+		const board = new Board();
+		const blackPawn = new Pawn("black", { row: 1, col: 3 });
+		const enemyRight = new Pawn("white", { row: 2, col: 4 });
+		const allyLeft = new Pawn("black", { row: 2, col: 2 });
+		board.placePiece(blackPawn);
+		board.placePiece(enemyRight);
+		board.placePiece(allyLeft);
+
+		const moves = blackPawn.getLegalMoves(board);
+
+		expect(containsPosition(moves, { row: 2, col: 4 })).toBe(true);
+		expect(containsPosition(moves, { row: 2, col: 2 })).toBe(false);
+	});
 });
