@@ -1,4 +1,5 @@
-import { Position } from "../pieces/Piece";
+import { Position, Piece } from "../pieces/Piece";
+export type Moves = Position[];
 
 export class Move {
     from: Position;

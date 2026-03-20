@@ -1,7 +1,6 @@
 import { Board } from "../board/Board";
 import { Color, Position } from "../pieces/Piece";
 import { Pawn } from "../pieces/Pawn";
-import { PromotionPieceType } from "../types/pieceType";
 import { algebraicToPosition } from "../utils/square";
 import { Move } from "../move/Move";
 
@@ -38,8 +37,7 @@ export class Game {
 
 	move(
 		fromSquare: string,
-		toSquare: string,
-		promoteTo: PromotionPieceType = "queen"
+		toSquare: string
 	) {
 		const from = algebraicToPosition(fromSquare);
 		const to = algebraicToPosition(toSquare);
@@ -57,17 +55,21 @@ export class Game {
 
 		const legalMoves = piece.getLegalMoves(this.board);
 
-		const isLegal = legalMoves.some((pos: Position) => pos.row === move.to.row && pos.col === move.to.col);
+		const isLegal = legalMoves.some((pos: Position) => {
+			return pos.row === move.to.row && pos.col === move.to.col
+		});
 
 		if (!isLegal) {
 			throw new Error("Illegal move");
 		}
 
-		// execute move
+		// UPDATE BOARD STATS AND PIECE POSITION
 		this.board.movePiece(move.from, move.to);
-
 		const movedPiece = this.board.getPiece(move.to);
+		movedPiece?.moveTo(move.to);
+		
 
+		// LOGGING THE MOVE IN HISTORY AND SWITCHING TURNS
 		this.moveHistory.push(`${fromSquare}->${toSquare}`);
 		this.switchTurn();
 	}

@@ -2,12 +2,10 @@ import { Board } from "../board/Board";
 import { PieceType } from "../types/pieceType";
 
 export type Color = "white" | "black";
-
 export type Position = {
 	row: number;
 	col: number;
-};
-
+}
 export class Piece {
 	type: PieceType;
 	color: Color;
