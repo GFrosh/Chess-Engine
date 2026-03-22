@@ -46,6 +46,16 @@ export class Knight extends Piece {
             col: col - 2
         } // 247.5 degrees...
         
+        const potentialMoves: Position[] = [
+            LJumpOne, LJumpTwo, LJumpThree, LJumpFour,
+            LJumpFive, LJumpSix, LJumpSeven, LJumpEight
+        ];
+
+        potentialMoves.forEach((move) => {
+            if (board.isWithinBounds(move) && (board.getPiece(move)?.color !== this.color)) {
+                moves.push(move);
+            }
+        });
 
         return moves;
     }

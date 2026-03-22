@@ -48,7 +48,6 @@ export class MoveValidator {
 		if (!this.isMoveLegal(piece, board, move)) {
 			throw new Error(`Illegal move: ${piece.type} ${fromLabel} -> ${toLabel}`);
 		}
-
 		return piece;
 	}
 }

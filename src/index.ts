@@ -6,6 +6,8 @@ game.start();
 game.move("e2", "e4");
 game.move("d7", "d5");
 game.move("e4", "d5");
+game.move("b8", "c6");
+game.move("d5", "c6");
 
 console.log("Game History: ");
 console.log(game.moveHistory);
