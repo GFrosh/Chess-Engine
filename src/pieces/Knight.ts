@@ -8,50 +8,19 @@ export class Knight extends Piece {
 
     getLegalMoves(board: Board): Position[] {
         const moves: Position[] = [];
-        const direction: number = this.color === "white" ? -1 : 1;
         const { row, col } = this.position;
-
-        // STILL THINKING OF HOW TO IMPLEMENT A KNIGHT MOVEMENTS
-        // KINDA COMPLEX THO
-        const LJumpOne: Position = {
-            row: row + 1 * direction,
-            col: col - 2
-        } // 22.5 degrees...
-        const LJumpTwo: Position = {
-            row: row + 2 * direction,
-            col: col - 1
-        } // 67.5 degrees...
-        const LJumpThree: Position = {
-            row: row + 2 * direction,
-            col: col + 1
-        } // 112.5 degrees...
-        const LJumpFour: Position = {
-            row: row + 1 * direction,
-            col: col + 2
-        } // 135 degrees...
-        const LJumpFive: Position = {
-            row: row - 1 * direction,
-            col: col + 2
-        } // 157.5 degrees...
-        const LJumpSix: Position = {
-            row: row - 2 * direction,
-            col: col - 1
-        } // 180 degrees...
-        const LJumpSeven: Position = {
-            row: row - 2 * direction,
-            col: col - 1
-        } // 202.5 degrees...
-        const LJumpEight: Position = {
-            row: row - 1 * direction,
-            col: col - 2
-        } // 247.5 degrees...
-        
-        const potentialMoves: Position[] = [
-            LJumpOne, LJumpTwo, LJumpThree, LJumpFour,
-            LJumpFive, LJumpSix, LJumpSeven, LJumpEight
+        const jumps: Position[] = [
+            { row: row - 2, col: col - 1 },
+            { row: row - 2, col: col + 1 },
+            { row: row - 1, col: col - 2 },
+            { row: row - 1, col: col + 2 },
+            { row: row + 1, col: col - 2 },
+            { row: row + 1, col: col + 2 },
+            { row: row + 2, col: col - 1 },
+            { row: row + 2, col: col + 1 }
         ];
 
-        potentialMoves.forEach((move) => {
+        jumps.forEach((move) => {
             if (board.isWithinBounds(move) && (board.getPiece(move)?.color !== this.color)) {
                 moves.push(move);
             }
