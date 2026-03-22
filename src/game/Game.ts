@@ -24,6 +24,7 @@ export class Game {
 	private setupPieces() {
 		Setup.pawns(this.board);
 		Setup.knights(this.board);
+		Setup.rooks(this.board);
 	}
 
 
