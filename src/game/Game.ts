@@ -22,12 +22,8 @@ export class Game {
 	}
 
 	private setupPieces() {
-		Setup.pawns(this.board);
-		Setup.knights(this.board);
-		Setup.rooks(this.board);
-		Setup.bishops(this.board);
+		Setup.all(this.board);
 	}
-
 
 	move(fromSquare: string, toSquare: string) {
 		const from = algebraicToPosition(fromSquare);
@@ -35,10 +31,7 @@ export class Game {
 
 		const move = new Move(from, to);
 
-		// Validate the move (source piece, turn, legality)
 		MoveValidator.validateMove(this.board, move, this.currentPlayer);
-
-		// Execute the move atomically
 		MoveService.executeMove(this.board, move);
 
 		// Log and switch turns

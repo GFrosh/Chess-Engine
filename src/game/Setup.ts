@@ -3,6 +3,8 @@ import { Knight } from "../pieces/Knight";
 import { Pawn } from "../pieces/Pawn";
 import { Rook } from "../pieces/Rook";
 import { Bishop } from "../pieces/Bishop";
+import { Queen } from "../pieces/Queen";
+import { King } from "../pieces/King";
 
 export class Setup {
     static pawns(board: Board) {
@@ -70,5 +72,38 @@ export class Setup {
         board.placePiece(
             new Bishop("black", { row: 0, col: 5 })
         );
+    }
+
+    static queens(board: Board) {
+        // WHITE QUEEN
+        board.placePiece(
+            new Queen("white", { row: 7, col: 3 })
+        );
+
+        // BLACK QUEEN
+        board.placePiece(
+            new Queen("black", { row: 0, col: 3 })
+        );
+    }
+
+    static kings(board: Board) {
+        // WHITE KING
+        board.placePiece(
+            new King("white", { row: 7, col: 4 })
+        );
+
+        // BLACK KING
+        board.placePiece(
+            new King("black", { row: 0, col: 4 })
+        );
+    }
+
+    static all(board: Board) {
+        this.pawns(board);
+        this.knights(board);
+        this.rooks(board);
+        this.bishops(board);
+        this.queens(board);
+        this.kings(board);
     }
 }
