@@ -7,7 +7,7 @@ import { Queen } from "../pieces/Queen";
 import { King } from "../pieces/King";
 
 export class Setup {
-    static pawns(board: Board) {
+    private static pawns(board: Board) {
         for (let col = 0; col < board.size; col++) {
             // White pawns
             board.placePiece(
@@ -21,7 +21,7 @@ export class Setup {
     }
 
 
-    static knights(board: Board) {
+    private static knights(board: Board) {
         // White Knights
         board.placePiece(
             new Knight("white", { row: 7, col: 1 })
@@ -38,7 +38,7 @@ export class Setup {
         );
     }
 
-    static rooks(board: Board) {
+    private static rooks(board: Board) {
         // WHITE ROOKS
         board.placePiece(
             new Rook("white", { row: 7, col: 0})
@@ -56,7 +56,7 @@ export class Setup {
         );
     }
 
-    static bishops(board: Board) {
+    private static bishops(board: Board) {
         // WHITE BISHOPS
         board.placePiece(
             new Bishop("white", { row: 7, col: 2 })
@@ -74,7 +74,7 @@ export class Setup {
         );
     }
 
-    static queens(board: Board) {
+    private static queens(board: Board) {
         // WHITE QUEEN
         board.placePiece(
             new Queen("white", { row: 7, col: 3 })
@@ -86,7 +86,7 @@ export class Setup {
         );
     }
 
-    static kings(board: Board) {
+    private static kings(board: Board) {
         // WHITE KING
         board.placePiece(
             new King("white", { row: 7, col: 4 })
@@ -98,7 +98,16 @@ export class Setup {
         );
     }
 
-    static all(board: Board) {
+    static default(board: Board) {
+        this.pawns(board);
+        this.knights(board);
+        this.rooks(board);
+        this.bishops(board);
+        this.queens(board);
+        this.kings(board);
+    }
+
+    static standard(board: Board) {
         this.pawns(board);
         this.knights(board);
         this.rooks(board);

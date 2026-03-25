@@ -22,7 +22,7 @@ export class Game {
 	}
 
 	private setupPieces() {
-		Setup.all(this.board);
+		Setup.standard(this.board);
 	}
 
 	move(fromSquare: string, toSquare: string) {

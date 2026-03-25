@@ -20,8 +20,7 @@ export class MoveService {
 		board.setSquare(move.from.row, move.from.col, null);
 
 		// Update piece state
-		piece.position = move.to;
-
+		piece.moveTo(move.to);
 		return piece;
 	}
 
@@ -29,6 +28,6 @@ export class MoveService {
 	static undoMove(board: Board, move: Move, piece: Piece): void {
 		board.setSquare(move.from.row, move.from.col, piece);
 		board.setSquare(move.to.row, move.to.col, null);
-		piece.position = move.from;
+		piece.moveTo(move.from);
 	}
 }
