@@ -1,32 +1,41 @@
 # Chess Engine (TypeScript)
 
-A lightweight chess engine project written in TypeScript.
+A lightweight chess engine written in TypeScript with a clear separation between move validation and move execution.
 
-Current scope is focused on board state, pawn movement, and a cleaner move pipeline split across validation and execution services.
+Current implementation supports full piece movement rules for all standard piece types and a standard board setup.
 
 ## Current Features
 
 - 8x8 board model with bounds-safe access (`Board`)
-- Piece placement and retrieval APIs (`placePiece`, `getPiece`, `setSquare`)
-- Pawn legal move generation:
-  - single forward move
-  - double forward move from starting rank
-  - diagonal captures
-  - out-of-bounds filtering
+- Standard starting position setup (`Setup.standard`)
+- Piece movement rules implemented for:
+  - pawn
+  - rook
+  - knight
+  - bishop
+  - queen
+  - king
 - Turn-based move validation pipeline (`MoveValidator`)
+  - source square contains a piece
+  - piece color matches current player
+  - destination is in the piece's legal move list
 - Atomic move execution service (`MoveService`)
-- Centralized position helpers (`arePositionsEqual`, `findPosition`, row/col/diagonal checks)
+  - updates board squares
+  - updates moved piece position
+  - supports basic capture handling
 - Algebraic square parsing and formatting (`algebraicToPosition`, `positionToAlgebraic`)
-- Move history logging in game flow (`from->to` format)
+- Move history logging in game flow (`from->to` string format)
+- Terminal-friendly ASCII board rendering (`Board.toAscii` / `Board.print`)
 
-## Architecture Progress
+## Architecture
 
-- `Game` orchestrates turn flow and move history
-- `MoveValidator` owns legality checks (piece exists, correct turn, legal destination)
-- `MoveService` owns board + piece state updates for move/undo
-- `Board` owns grid storage and bounds-safe square access
-- `Piece` subclasses own legal move generation
-- `MovementPatterns` utility is added for reusable piece movement logic as more pieces are implemented
+- `Game`: orchestrates game flow (start, move, turn switching, history)
+- `Setup`: places all pieces on initial squares
+- `MoveValidator`: owns legality checks
+- `MoveService`: owns state mutation for execute/undo
+- `Board`: owns grid storage and square access
+- `Piece` subclasses: own movement generation for each piece type
+- `utils`: position and square conversion helpers
 
 ## Project Structure
 
@@ -37,20 +46,34 @@ src/
     Board.ts
   game/
     Game.ts
+    Setup.ts
   move/
     Move.ts
     MoveService.ts
     MoveValidator.ts
   pieces/
-    MovementPatterns.ts
-    Piece.ts
+    Bishop.ts
+    King.ts
+    Knight.ts
     Pawn.ts
+    Piece.ts
+    Queen.ts
+    Rook.ts
   types/
     grid.ts
     pieceType.ts
   utils/
     positionUtils.ts
     square.ts
+
+tests/
+  pieces/
+    Bishop.test.ts
+    Pawn.test.ts
+    RookKnight.test.ts
+  utils/
+    positionUtils.test.ts
+    square.test.ts
 ```
 
 ## Getting Started
@@ -66,10 +89,22 @@ src/
 npm install
 ```
 
-### Run in Development
+### Run Demo
 
 ```bash
 npm run dev
+```
+
+### Run Tests
+
+```bash
+npm test
+```
+
+### Watch Tests
+
+```bash
+npm run test:watch
 ```
 
 ### Build
@@ -92,31 +127,30 @@ From `src/index.ts`:
 import { Game } from "./game/Game";
 
 const game = new Game();
-game.start();
 
+game.start();
 game.move("e2", "e4");
-game.move("e7", "e5");
+game.move("d7", "d5");
+game.move("d1", "g4");
+game.move("c8", "g4");
+game.move("e1", "e2");
+
+console.log("Game History:");
+console.log(game.moveHistory);
+
+console.log("Board State:");
+game.board.print();
 ```
 
-## Known Limitations (In Progress)
+## Current Limitations
 
-- Pawns are currently the only fully modeled piece class
-- `MoveService.executeMove` returns the moved piece, but the return value is not yet consumed in `Game`
-- Movement pattern helpers exist but are not yet wired into concrete non-pawn pieces
 - No check/checkmate validation yet
-- No castling or en passant yet
-- No full algebraic notation output yet
-
-## Roadmap
-
-- Add remaining piece movement logic (knight, bishop, rook, queen, king)
-- Integrate `MovementPatterns` into the new piece implementations
-- Decide whether to consume the returned moved piece from `MoveService` or change return type to `void`
-- Implement king safety checks (no move that leaves king in check)
-- Implement promotion execution in game flow
-- Add castling and en passant
-- Add unit tests for board and move legality
+- No castling
+- No en passant
+- No promotion flow
+- No FEN/PGN import-export
+- Move history is a simple `from->to` list (not full algebraic notation)
 
 ## License
 
-This project is licensed under the ISC License. See the `LICENSE` file for details.
+This project is licensed under the ISC License. See `LICENSE` for details.
