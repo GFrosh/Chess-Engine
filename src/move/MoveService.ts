@@ -10,10 +10,18 @@ export class MoveService {
     // Execute a move: update board state AND piece internal state atomically
 	static executeMove(board: Board, move: Move): Piece {
 		
+		// CONFIRM PIECE EXISTENCE
         const piece = board.getPiece(move.from);
 		if (!piece) {
 			throw new Error("Cannot execute move: no piece at source");
 		}
+
+		// CHECK IF MOVE IS A CAPTURE MOVE
+		const captured: Piece | null = board.getPiece(move.to);
+		if (captured) {
+			captured.updateStatus();
+		}
+
 
 		// Update board state
 		board.setSquare(move.to.row, move.to.col, piece);

@@ -5,7 +5,7 @@ export type Color = "white" | "black";
 export type Position = {
 	row: number;
 	col: number;
-}
+};
 export class Piece {
 	type: PieceType;
 	color: Color;
@@ -20,6 +20,11 @@ export class Piece {
 
 	moveTo(position: Position) {
 		this.position = position;
+	}
+
+	updateStatus() {
+		this.isCaptured = false;
+		this.position = this.color === "white" ? { row: -9, col: 9 } : { row: 9, col: 9 };
 	}
 
 	getLegalMoves(_board: Board): Position[] {
