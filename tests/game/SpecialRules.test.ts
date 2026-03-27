@@ -162,4 +162,56 @@ describe("Check and checkmate", () => {
 		expect(game.winner).toBeNull();
 		expect(game.inCheck).toBeNull();
 	});
+
+	it("undo reverts board state, turn, and move history", () => {
+		const game = new Game();
+		game.start();
+
+		game.move("e2", "e4");
+
+		expect(game.currentPlayer).toBe("black");
+		expect(game.moveHistory).toEqual(["e2->e4"]);
+		expect(game.board.getPiece({ row: 4, col: 4 })?.type).toBe("pawn");
+		expect(game.board.getPiece({ row: 6, col: 4 })).toBeNull();
+
+		game.undo();
+
+		expect(game.currentPlayer).toBe("white");
+		expect(game.moveHistory).toEqual([]);
+		expect(game.lastMove).toBeUndefined();
+		expect(game.board.getPiece({ row: 6, col: 4 })?.type).toBe("pawn");
+		expect(game.board.getPiece({ row: 4, col: 4 })).toBeNull();
+	});
+
+	it("undo clears checkmate game-over state", () => {
+		const game = new Game();
+		game.start();
+
+		game.move("f2", "f3");
+		game.move("e7", "e5");
+		game.move("g2", "g4");
+		game.move("d8", "h4");
+
+		expect(game.isGameOver).toBe(true);
+		expect(game.gameEndReason).toBe("checkmate");
+		expect(game.winner).toBe("black");
+
+		game.undo();
+
+		expect(game.isGameOver).toBe(false);
+		expect(game.gameEndReason).toBeNull();
+		expect(game.winner).toBeNull();
+		expect(game.currentPlayer).toBe("black");
+		expect(game.inCheck).toBeNull();
+		expect(game.moveHistory).toEqual(["f2->f3", "e7->e5", "g2->g4"]);
+		expect(game.board.getPiece({ row: 0, col: 3 })?.type).toBe("queen");
+		expect(game.board.getPiece({ row: 4, col: 7 })).toBeNull();
+	});
+
+	it("throws when undo is called with no moves", () => {
+		const game = new Game();
+		game.start();
+
+		expect(() => game.undo()).toThrow("No moves to undo");
+	});
 });
