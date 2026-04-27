@@ -293,6 +293,40 @@ export class MoveValidator {
 		return false;
 	}
 
+	static getAllLegalMoves(board: Board, currentPlayer: Color, lastMove?: Move): Move[] {
+		const legalMoves: Move[] = [];
+
+		for (let row = 0; row < board.size; row++) {
+			for (let col = 0; col < board.size; col++) {
+				const piece = board.getPiece({ row, col });
+				if (!piece || piece.color !== currentPlayer) {
+					continue;
+				}
+
+				const candidates = this.getCandidateTargets(board, piece);
+				for (const target of candidates) {
+					if (!board.isWithinBounds(target)) {
+						continue;
+					}
+
+					const promotionPiece = piece.type === "pawn" && (target.row === 0 || target.row === 7)
+						? "queen"
+						: undefined;
+					const move = new Move({ row, col }, { row: target.row, col: target.col }, promotionPiece);
+
+					try {
+						this.validateMove(board, move, currentPlayer, lastMove);
+						legalMoves.push(move);
+					} catch {
+						// Skip invalid moves
+					}
+				}
+			}
+		}
+
+		return legalMoves;
+	}
+
 	static isCheckmate(board: Board, currentPlayer: Color, lastMove?: Move): boolean {
 		return this.isKingInCheck(board, currentPlayer) && !this.hasAnyLegalMove(board, currentPlayer, lastMove);
 	}
